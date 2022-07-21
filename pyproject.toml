@@ -2,7 +2,10 @@
 name = "Fantastic Fauns"
 version = "0.1.0"
 description = "Project for python discord code jam #9"
-authors = ["German Alvarez <germanalvarez14@gmail.com"]
+authors = [
+    "German Alvarez <germanalvarez14@gmail.com",
+    "Garrett West <gdubs0896@gmail.com"
+    ]
 license = "MIT"
 
 [tool.poetry.dependencies]
