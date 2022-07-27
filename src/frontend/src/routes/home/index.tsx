@@ -5,14 +5,14 @@ import Chat from "../../components/Chat";
 import SocketProvider from "../../components/SocketProvider";
 
 const Home = () => (
-	<SocketProvider>
+  <SocketProvider>
     <div class='flex justify-center h-screen flex-row bg-gray-800'>
       <div class='flex mt-12 mb-16'>
         <Canvas />
         <Chat />
       </div>
     </div>
-    </SocketProvider>
+  </SocketProvider>
 );
 
 export default Home;
