@@ -15,11 +15,18 @@ const Canvas = () => {
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.fillStyle = "black";
+    const drawSocket = new WebSocket("ws://localhost:3000/ws");
 
     // create full logic for drawing
     const draw = (e) => {
       if (!painting) return;
       console.log(e);
+      const drawData = {
+        type: "draw",
+        e,
+      };
+      // Sends the draw event data to the backend
+      drawSocket.send(JSON.stringify(drawData));
       ctx.lineTo(
         e.offsetX,
         e.offsetY,
