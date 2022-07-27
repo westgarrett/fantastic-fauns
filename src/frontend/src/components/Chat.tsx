@@ -3,7 +3,7 @@ import { h } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import Message from '../types/types';
 
-const Chat = () => {
+const Chat = ({messages}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState("Anonymous");

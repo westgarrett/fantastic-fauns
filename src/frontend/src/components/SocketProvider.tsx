@@ -4,11 +4,11 @@ import { tw } from "twind";
 import { useEffect, useRef, useState } from "preact/hooks";
 
 const SocketContext = createContext({
-  sendData: () => { },
-  setMessages: () => { },
-  setPoints: () => { },
-  setUser: () => { },
-  setMessage: () => { },
+  messages: [],
+  points: [],
+  user: "",
+  message: "",
+  
 });
 
 const SocketProvider = (props) => {
@@ -17,15 +17,15 @@ const SocketProvider = (props) => {
   const [points, setPoints] = useState<number>(0);
   const [user, setUser] = useState<string>("Anonymous");
   const [message, setMessage] = useState<string>("");
+  const ws = new WebSocket("ws://localhost:3000/ws");
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:3000/ws");
+    
     ws.onopen = () => {
       console.log("New client connected to server");
-
       const data = {
         type: "join",
-        user: user,
+        user,
       }
       ws.send(JSON.stringify(data));
     };
@@ -36,7 +36,7 @@ const SocketProvider = (props) => {
   }
 
   return (
-    <SocketContext.Provider>
+    <SocketContext.Provider value={{ messages, points, user, message, sendData }}>
       {props.children}
     </SocketContext.Provider>
   );
