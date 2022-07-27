@@ -20,31 +20,31 @@ const Canvas = () => {
     const draw = (e) => {
       if (!painting) return;
       console.log(e);
-      ctx.current.lineTo(
-        e.nativeEvent.offsetX,
-        e.nativeEvent.offsetY,
+      ctx.lineTo(
+        e.offsetX,
+        e.offsetY,
       );
 
-      ctx.current.stroke();
+      ctx.stroke();
     };
     const start = (e: any) => {
-      console.log(e);
+      // console.log(e);
       ctx.beginPath();
-      ctx.current.moveTo(
-        e.nativeEvent.offsetX,
-        e.nativeEvent.offsetY,
+      ctx.moveTo(
+        e.offsetX,
+        e.offsetY,
       );
       painting = true;
     };
     const stop = (e: any) => {
-      ctx.current.closePath();
+      ctx.closePath();
       painting = false;
     };
 
     // event listeners
-    canvas.current.addEventListener("mousedown", start);
-    canvas.current.addEventListener("mouseup", stop);
-    canvas.current.addEventListener("mousemove", draw);
+    canvas.addEventListener("mousedown", start);
+    canvas.addEventListener("mouseup", stop);
+    canvas.addEventListener("mousemove", draw);
   });
 
   return (
