@@ -8,7 +8,7 @@ const SocketContext = createContext({
   points: [],
   user: "",
   message: "",
-  
+
 });
 
 const SocketProvider = (props) => {
@@ -20,13 +20,13 @@ const SocketProvider = (props) => {
   const ws = new WebSocket("ws://localhost:3000/ws");
 
   useEffect(() => {
-    
+
     ws.onopen = () => {
       console.log("New client connected to server");
       const data = {
         type: "join",
         user,
-      }
+      };
       ws.send(JSON.stringify(data));
     };
   }, []);
