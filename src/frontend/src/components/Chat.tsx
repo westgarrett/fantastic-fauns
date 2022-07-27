@@ -3,7 +3,7 @@ import { h } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import Message from '../types/types';
 
-const Chat = ({messages}) => {
+const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState("Anonymous");
@@ -11,12 +11,12 @@ const Chat = ({messages}) => {
 
   useEffect(() => {
     input.current.addEventListener("keydown", (e) => {
-        
-        if (e.key === "Enter") {
-            sendMessage();
-        }
+
+      if (e.key === "Enter") {
+        sendMessage();
+      }
     });
-}, []);
+  }, []);
 
   // test messages
   const testMessages = () => {
@@ -43,18 +43,18 @@ const Chat = ({messages}) => {
       </div>
 
       <div class='flex flex-row w-full'>
-          <input
-            ref={input}
-            value={message}
-            onKeyDown={(e) => e.key === "Enter"  && sendMessage()}
-            onChange={(event) => setMessage(event.target.value)}
-            type="text"
-            class='w-full shadow-lg py-5 rounded-lg mx-2 px-2'
-            placeholder="Say something"
-          />
-          <button onClick={sendMessage}>Send</button>
+        <input
+          ref={input}
+          value={message}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onChange={(event) => setMessage(event.target.value)}
+          type="text"
+          class='w-full shadow-lg py-5 rounded-lg mx-2 px-2'
+          placeholder="Say something"
+        />
+        <button onClick={sendMessage}>Send</button>
       </div>
-      
+
     </div>
   );
 };
