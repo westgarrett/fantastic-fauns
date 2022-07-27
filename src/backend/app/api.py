@@ -1,9 +1,14 @@
-from fastapi import FastAPI, websockets
+"""
+Backend using FastAPI
+"""
+from typing import List, Dict
+
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+app: FastAPI = FastAPI()
 
-origins = [
+origins: List[str] = [
     "https://localhost:3000",
     "localhost:3000",
 ]
@@ -16,13 +21,12 @@ app.add_middleware(
     allow_headers = ["*"],
 )
 
-
 @app.get("/", tags=['root'])
-async def read_root() -> dict:
+async def read_root() -> Dict:
     return {"message": "Hello World"}
 
-@app.get("/ws", tags=['ws'])
-async def websocket_endpoint(websocket: websockets.WebSocket):
+@app.websocket_route("/ws")
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_json()
