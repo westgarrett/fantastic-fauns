@@ -3,13 +3,14 @@ import { h } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import Message from '../types/types';
 
-const Chat = ({messages}) => {
+const Chat = (props) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState("Anonymous");
   const input = useRef(null);
 
   useEffect(() => {
+    setMessages(props.messages);
     input.current.addEventListener("keydown", (e) => {
         
         if (e.key === "Enter") {
