@@ -1,45 +1,54 @@
 // deno-lint-ignore-file no-explicit-any
 /** @jsx h **/
 import { h } from "preact";
-import { useEffect, useRef } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 const Canvas = () => {
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
+  // function clearCanvas() {
+  //   canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  // }
 
   useEffect(() => {
     let painting = false;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    ctx.lineWidth = 10;
+    ctx.lineWidth = 1;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.fillStyle = "black";
-    const drawSocket = new WebSocket("ws://localhost:3000/ws");
 
     // create full logic for drawing
     const draw = (e) => {
-      if (!painting) return;
-      console.log(e);
-      const drawData = {
-        type: "draw",
-        e,
-      };
-      // Sends the draw event data to the backend
-      drawSocket.send(JSON.stringify(drawData));
-      ctx.lineTo(
-        e.offsetX,
-        e.offsetY,
-      );
+      const canvasPos = canvas.getBoundingClientRect();
+      const canvasOffsetX = canvasPos.left;
+      const canvasOffsetY = canvasPos.top;
+      const canvasScaleX = canvas.width / canvasPos.width;
+      const canvasScaleY = canvas.height / canvasPos.height;
 
+      if (!painting) return;
+      const mouseX = (e.clientX - canvasOffsetX) * canvasScaleX;
+      const mouseY = (e.clientY - canvasOffsetY) * canvasScaleY;
+      ctx.lineTo(
+        mouseX,
+        mouseY,
+      );
       ctx.stroke();
     };
     const start = (e: any) => {
-      // console.log(e);
+      const canvasPos = canvas.getBoundingClientRect();
+      const canvasOffsetX = canvasPos.left;
+      const canvasOffsetY = canvasPos.top;
+      const canvasScaleX = canvas.width / canvasPos.width;
+      const canvasScaleY = canvas.height / canvasPos.height;
+
+      const mouseX = (e.clientX - canvasOffsetX) * canvasScaleX;
+      const mouseY = (e.clientY - canvasOffsetY) * canvasScaleY;
       ctx.beginPath();
       ctx.moveTo(
-        e.offsetX,
-        e.offsetY,
+        mouseX,
+        mouseY,
       );
       painting = true;
     };
@@ -56,9 +65,9 @@ const Canvas = () => {
 
   return (
     <div
-      class='flex mt-6 flex-row shadow-2xl justify-center mt-10 bg-white mx-5 rounded-lg'
+      class='flex mt-6 shadow-2xl mt-10 bg-white mx-5 rounded-lg canvas-container'
     >
-      <canvas ref={canvasRef} class='w-[700px] h-[700px]'>
+      <canvas ref={canvasRef} class="w-1/2">
         Your browser does not support the HTML5 canvas tag.
       </canvas>
     </div>
