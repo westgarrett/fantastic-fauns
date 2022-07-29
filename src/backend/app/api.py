@@ -31,7 +31,7 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         data = await websocket.receive_json()
         if data['type'] == 'draw':
-            print("draw event working")
+            print(data)
             # The data from the draw event will be sent here, which can then be saved
             # To start, 
             # await websocket.send_json({"point": data['points']})
