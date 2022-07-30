@@ -1,34 +1,25 @@
 /** @jsx h */
 import { h } from "preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useRef, useState, useContext  } from "preact/hooks";
 import Message from '../types/types';
+import SocketContext from "./SocketContext";
 
 const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [user, setUser] = useState("Anonymous");
   const input = useRef(null);
+  const ws = useContext(SocketContext);
 
   useEffect(() => {
-    input.current.addEventListener("keydown", (e) => {
-
-      if (e.key === "Enter") {
-        sendMessage();
-      }
-    });
-  }, []);
-
-  // test messages
-  const testMessages = () => {
-    setMessages([
-      { message: "Hello", user: "John" },
-      { message: "Hi", user: "Jane" },
-      { message: "How are you?", user: "John" },
-      { message: "I'm fine", user: "Jane" },
-    ]);
-  };
+    input.current.focus();
+  }
+  , []);
   const sendMessage = () => {
-    setMessages([...messages, { message, user }]);
+    ws.messages = [...ws.messages, {
+      type: "message",
+      user,
+      message,
+    }];
     setMessage("");
   };
 
@@ -37,7 +28,7 @@ const Chat = () => {
       class='flex flex-col justify-between bg-white h-auto rounded-lg mt-10 px-5 py-2'
     >
       <div class='flex flex-col w-full'>
-        {messages.map((message, index) => (
+        {ws.messages.map((message) => (
           <p>{message.user}: {message.message}</p>
         ))}
       </div>

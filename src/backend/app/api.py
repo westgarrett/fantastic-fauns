@@ -27,9 +27,11 @@ async def read_root() -> Dict:
 
 @app.websocket_route("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    messages = []
     await websocket.accept()
     while True:
         data = await websocket.receive_json()
+        #handle disconnect
         if data['type'] == 'draw':
             print(data)
             # The data from the draw event will be sent here, which can then be saved
@@ -38,7 +40,13 @@ async def websocket_endpoint(websocket: WebSocket):
         if data['type'] == 'clear':
             await websocket.send_json({"clear": True})
         if data['type'] == 'message':
-            await websocket.send_json({"message": data['message']})
+            messages.append(data['message'])
+            await websocket.send_json({"type": "message", "message": data['message']})
         if data['type'] == 'join':
             print("join event working")
-            await websocket.send_json({"message": "Welcome to the chat! " + data['user']})
+            print(data)
+            await websocket.send_json({"user": "server", "type":"message","message": data['user'] + " has joined the chat"})
+        if data['type'] == 'leave':
+            print("leave event working")
+            print(data)
+            await websocket.send_json({"user": "server", "type":"message","message": data['user'] + " has left the chat"})
