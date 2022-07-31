@@ -5,10 +5,10 @@ import Message from '../types/types';
 import SocketContext from "./SocketContext";
 
 const Chat = () => {
-  const [message, setMessage] = useState("");
-  const [user, setUser] = useState("Anonymous");
-  const input = useRef(null);
   const ws = useContext(SocketContext);
+  const [message, setMessage] = useState("");
+  const [user, setUser] = useState(ws.user);
+  const input = useRef(null);
 
   useEffect(() => {
     input.current.focus();
@@ -24,9 +24,7 @@ const Chat = () => {
   };
 
   return (
-    <div
-      class='flex flex-col justify-between bg-white h-auto rounded-lg mt-10 px-5 py-2'
-    >
+    <div class='flex flex-col justify-between bg-white h-auto rounded-lg mt-10 px-5 py-2'>
       <div class='flex flex-col w-full'>
         {ws.messages.map((message) => (
           <p>{message.user}: {message.message}</p>

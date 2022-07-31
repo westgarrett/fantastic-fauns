@@ -1,7 +1,9 @@
 """
 Backend using FastAPI
 """
+from multiprocessing import connection
 from typing import List, Dict
+import asyncio
 
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,25 +27,45 @@ app.add_middleware(
 async def read_root() -> Dict:
     return {"message": "Hello World"}
 
-@app.websocket_route("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    messages = []
-    await websocket.accept()
+class ConnectionManager:
+    def __init__(self):
+        self.connections: dict[str, WebSocket] = {}
+        self.userlist: List[str] = []
+        self.messages = []
+
+    async def connect(self, websocket: WebSocket, user: str):
+        await websocket.accept()
+        self.connections[user] = websocket
+
+    async def disconnect(self, websocket: WebSocket, user: str):
+        del self.connections[user]
+
+    async def broadcast(self, data: dict):
+        for id in self.connections.keys():
+            await self.connections[id].send_json(data)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws/{user}")
+async def websocket_endpoint(user: str, websocket: WebSocket):
+    await manager.connect(websocket, user)
     while True:
         data = await websocket.receive_json()
         #handle disconnect
+        # get members
         if data['type'] == 'draw':
             await websocket.send_json({"point": data['points']})
+            
         if data['type'] == 'clear':
             await websocket.send_json({"clear": True})
+
         if data['type'] == 'message':
-            messages.append(data['message'])
-            await websocket.send_json({"type": "message", "message": data['message']})
-        if data['type'] == 'join':
-            print("join event working")
-            print(data)
-            await websocket.send_json({"user": "server", "type":"message","message": data['user'] + " has joined the chat"})
+            await manager.broadcast({'user': 'server', 'type': 'message', 'message': data['message']})
+            
         if data['type'] == 'leave':
-            print("leave event working")
-            print(data)
-            await websocket.send_json({"user": "server", "type":"message","message": data['user'] + " has left the chat"})
+            manager.disconnect(websocket, data['user'])
+            await manager.broadcast({'user': 'server', 'type': 'message', 'message': data['user']})
+
+        if data['type'] == 'join':
+            await manager.broadcast({'type': 'message', 'message': user + ' has joined the room'})
+    
